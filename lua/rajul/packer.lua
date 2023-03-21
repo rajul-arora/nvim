@@ -17,6 +17,11 @@ return require('packer').startup(function(use)
 	use('tpope/vim-fugitive')
 	use('ThePrimeagen/harpoon')
 
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+    }
+
 	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
