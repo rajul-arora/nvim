@@ -22,6 +22,11 @@ return require('packer').startup(function(use)
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
 
+    use({
+        "iamcco/markdown-preview.nvim",
+        run = function() vim.fn["mkdp#util#install"]() end,
+    })
+
 	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
