@@ -17,6 +17,9 @@ return require('packer').startup(function(use)
 	use('tpope/vim-fugitive')
 	use('ThePrimeagen/harpoon')
 
+    use('numToStr/Comment.nvim')    
+    use('nvim-tree/nvim-tree.lua')
+
     use {
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }

@@ -6,7 +6,10 @@ lsp.ensure_installed({
 	'tsserver',
 	'eslint',
 	'lua_ls',
-	'rust_analyzer'
+	'rust_analyzer',
+    'gopls',
+    'cmake',
+    'clangd'
 })
 
 local cmp = require('cmp')
@@ -30,9 +33,14 @@ lsp.on_attach(function(client, bufnr)
 	local opts = { buffer = bufnr, remap = false }
 
 	vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set("n", "gv", ':vsp<cr> <cmd> lua vim.lsp.buf.definition()<cr>' , opts)
+    -- vim.keymap.set("n", "gv", ':vsp<cr> <cmd> lua vim.lsp.buf.definition()<cr>' , opts)
     vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
 	vim.keymap.set("n", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+
+
+    -- Define key mappings for going to definition in a vertical and horizontal split
+    vim.api.nvim_set_keymap('n', 'gv', '<cmd>vsplit | lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gh', '<cmd>split | lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
 end)
 
 lsp.setup()
