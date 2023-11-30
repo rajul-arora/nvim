@@ -16,6 +16,7 @@ return require('packer').startup(function(use)
 
   -- Themes
   use "EdenEast/nightfox.nvim" 
+  use "Shatur/neovim-ayu"
 
   -- LSP Configuration
   use "neovim/nvim-lspconfig"

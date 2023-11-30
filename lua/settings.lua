@@ -23,7 +23,7 @@ vim.opt.hlsearch = false
 vim.opt.wrap = true
 
 -- Color Theme
-vim.cmd('colorscheme carbonfox')
+vim.cmd('colorscheme ayu')
 
 -- Connect to macOS Keyboard
 vim.cmd [[
