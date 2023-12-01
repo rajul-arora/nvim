@@ -30,6 +30,11 @@ vim.cmd [[
   set clipboard+=unnamedplus
 ]]
 
+-- Nvim-Commnet setup
+require('nvim_comment').setup {
+  comment_chunk_text_object = "b"
+}
+
 -- Telescope
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
@@ -145,22 +150,6 @@ cmp.setup.filetype('gitcommit', {
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 -- Setup language servers.
 local lspconfig = require('lspconfig')
-lspconfig.pyright.setup {
-  capabilities = capabilities
-}
-lspconfig.tsserver.setup {
-    capabilities = capabilities
-}
-lspconfig.sourcekit.setup {
-    capabilities = capabilities
-}
-lspconfig.rust_analyzer.setup {
-  -- Server-specific settings. See `:help lspconfig-setup`
-  capabilities = capabilities,
-  settings = {
-    ['rust-analyzer'] = {},
-  },
-}
 
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -200,4 +189,27 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+lspconfig.pyright.setup {
+  capabilities = capabilities
+}
+lspconfig.tsserver.setup {
+    capabilities = capabilities
+}
+lspconfig.sourcekit.setup {
+    capabilities = capabilities,
+    opts = {
+      servers = {
+        sourcekit = {
+          cmd = '/usr/bin/sourcekit-lsp' 
+        },
+      },
+    }
+}
+lspconfig.rust_analyzer.setup {
+  -- Server-specific settings. See `:help lspconfig-setup`
+  capabilities = capabilities,
+  settings = {
+    ['rust-analyzer'] = {},
+  },
+}
 
