@@ -22,6 +22,18 @@ vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappin
 require("lazy").setup({
   "folke/which-key.nvim",
   "Shatur/neovim-ayu",
+  {
+    'nvim-help',
+    dir = '~/.config/nvim/nvim-help',
+    config = function()
+      require('nvim-help').setup({
+        keybindings = {
+          { mode = "n", key = "<leader>h", desc = "Toggle help overlay" },
+        }
+      })
+      vim.api.nvim_set_keymap('n', '<leader>h', ':lua require("nvim-help").toggle_help()<CR>', { noremap = true, silent = true })
+    end, 
+  },
   { 
     'nvim-telescope/telescope.nvim', 
     tag = '0.1.6', 
