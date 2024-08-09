@@ -48,7 +48,8 @@ require("lazy").setup({
     'nvim-telescope/telescope.nvim', 
     tag = '0.1.6', 
     dependencies = { 'nvim-lua/plenary.nvim' }
-  }
+  },
+  'xiyaowong/transparent.nvim'
 })
 
 -------------------------
@@ -141,4 +142,8 @@ lualine.setup {
   extensions = {}
 }
 
+----------------------------
+-- Transparent.nvim Setup --
+----------------------------
+vim.g.transparent_enabled = true
 
