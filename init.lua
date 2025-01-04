@@ -19,7 +19,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Example using a list of specs with the default options
 vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
 
-
 local keybindings = {
   { mode = "n", key = "<leader>h", desc = "Toggle help overlay" },
   { mode = "n", key = "<leader>ff", desc = "Toggle Find Files"},
@@ -28,21 +27,13 @@ local keybindings = {
 }
 
 require("lazy").setup({
-  "folke/which-key.nvim",
+  -- Themes
   "Shatur/neovim-ayu",
+  "sho-87/kanagawa-paper.nvim",
+  -- Lualine
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
-  },
-  {
-    'nvim-help',
-    dir = '~/.config/nvim/nvim-help',
-    config = function()
-      require('nvim-help').setup({
-        keybindings = keybindings
-      })
-      vim.api.nvim_set_keymap('n', '<leader>h', ':lua require("nvim-help").toggle_help()<CR>', { noremap = true, silent = true })
-    end, 
   },
   { 
     'nvim-telescope/telescope.nvim', 
@@ -80,11 +71,19 @@ vim.opt.smartcase = true
 vim.opt.hlsearch = false
 vim.opt.wrap = true
 
+-- Center the search results when cycling with 'n' or 'N'
+vim.cmd([[
+  augroup CenterSearch
+    autocmd!
+    autocmd CursorMoved * if mode() == 'n' && (v:hlsearch == 1) | normal! zz | endif
+  augroup END
+]])
+
 -- Connect to macOS Keyboard
 vim.cmd [[ set clipboard+=unnamedplus ]]
 
 -- Color Theme
-vim.cmd('colorscheme ayu')
+vim.cmd('colorscheme kanagawa-paper')
 
 ----------------------------------
 -- Telescope.nvim Configuration --
@@ -92,7 +91,7 @@ vim.cmd('colorscheme ayu')
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+im.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
@@ -104,7 +103,7 @@ local lualine = require('lualine')
 lualine.setup {
   options = {
     icons_enabled = true,
-    theme = 'ayu_dark',
+    theme = 'kanagawa-paper',
     component_separators = { left = '', right = ''},
     section_separators = { left = '', right = ''},
     disabled_filetypes = {
