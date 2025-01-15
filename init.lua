@@ -14,17 +14,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   })
 end
 
+
 vim.opt.rtp:prepend(lazypath)
 
 -- Example using a list of specs with the default options
 vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
-
-local keybindings = {
-  { mode = "n", key = "<leader>h", desc = "Toggle help overlay" },
-  { mode = "n", key = "<leader>ff", desc = "Toggle Find Files"},
-  { mode = "n", key = "<leader>fg", desc = "Toggle Live Grep"},
-  { mode = "n", key = "Ctrl + w + Arrow Key", desc = "Switch between splits"}
-}
 
 require("lazy").setup({
   -- Themes
@@ -35,12 +29,71 @@ require("lazy").setup({
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
-  { 
-    'nvim-telescope/telescope.nvim', 
-    tag = '0.1.6', 
+  {
+    'nvim-telescope/telescope.nvim',
+    tag = '0.1.6',
     dependencies = { 'nvim-lua/plenary.nvim' }
   },
-  'xiyaowong/transparent.nvim'
+  'xiyaowong/transparent.nvim',
+  "neovim/nvim-lspconfig",
+  {
+    "dundalek/lazy-lsp.nvim",
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      {"VonHeikemen/lsp-zero.nvim", branch = "v3.x"},
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      local lsp_zero = require("lsp-zero")
+
+      lsp_zero.on_attach(function(client, bufnr)
+        -- see :help lsp-zero-keybindings to learn the available actions
+        lsp_zero.default_keymaps({
+          buffer = bufnr,
+          preserve_mappings = false
+        })
+      end)
+
+      require("lazy-lsp").setup {
+        excluded_servers = {
+          "biome", "quick_lint_js", "tailwindcss", "denols"
+        },
+        prefer_local = true,
+        -- Override config for specific servers 
+
+        conifgs = {
+          lua_ls = {
+            settings = {
+              Lua = {
+               diagnostics = {
+                  globals = { "vim" },
+                }
+              }
+            }
+          },
+          ts_ls = {
+            settings = {
+              typescript = {
+                tsserver = {
+                  experimental = {
+                    types = { "Deno" } -- Ensure Deno is defined
+                  }
+                }
+              },
+              javascript = {
+                tsserver = {
+                  experimental = {
+                    types = { "Deno" } -- For JavaScript files too
+                  }
+                }
+              }
+            }
+          },
+        },
+      }
+    end,
+  }
 })
 
 -------------------------
@@ -91,7 +144,7 @@ vim.cmd('colorscheme kanagawa-paper')
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-im.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
@@ -145,4 +198,10 @@ lualine.setup {
 -- Transparent.nvim Setup --
 ----------------------------
 vim.g.transparent_enabled = true
+
+-----------------------
+-- LSP Configuration --
+-----------------------
+
+local lspConfig = require("lspconfig")
 
