@@ -21,33 +21,36 @@ vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappin
 
 
 local keybindings = {
-  { mode = "n", key = "<leader>h", desc = "Toggle help overlay" },
   { mode = "n", key = "<leader>ff", desc = "Toggle Find Files"},
   { mode = "n", key = "<leader>fg", desc = "Toggle Live Grep"},
   { mode = "n", key = "Ctrl + w + Arrow Key", desc = "Switch between splits"}
 }
 
 require("lazy").setup({
-  "folke/which-key.nvim",
   "Shatur/neovim-ayu",
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
-  {
-    'nvim-help',
-    dir = '~/.config/nvim/nvim-help',
-    config = function()
-      require('nvim-help').setup({
-        keybindings = keybindings
-      })
-      vim.api.nvim_set_keymap('n', '<leader>h', ':lua require("nvim-help").toggle_help()<CR>', { noremap = true, silent = true })
-    end, 
-  },
   { 
     'nvim-telescope/telescope.nvim', 
     tag = '0.1.6', 
     dependencies = { 'nvim-lua/plenary.nvim' }
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons", -- optional, but recommended
+    },
+    lazy = false, -- neo-tree will lazily load itself
+    opts = {
+      window = {
+        position = "float",
+      },
+    },
   },
   'xiyaowong/transparent.nvim'
 })
@@ -83,6 +86,29 @@ vim.opt.wrap = true
 -- Connect to macOS Keyboard
 vim.cmd [[ set clipboard+=unnamedplus ]]
 
+------------------------------------
+-- Native Indentation on Save Setup --
+------------------------------------
+
+local format_on_save = vim.api.nvim_create_augroup('format_on_save', { clear = true })
+
+vim.api.nvim_create_autocmd('BufWritePre', {
+  group = format_on_save,
+  callback = function(args)
+    local buffer = args.buf
+
+    if vim.bo[buffer].buftype ~= ''
+      or not vim.bo[buffer].modifiable
+      or vim.bo[buffer].readonly then
+      return
+    end
+
+    local view = vim.fn.winsaveview()
+    vim.cmd('silent keepjumps normal! gg=G')
+    vim.fn.winrestview(view)
+  end,
+})
+
 -- Color Theme
 vim.cmd('colorscheme ayu')
 
@@ -95,6 +121,17 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>e', '<Cmd>Neotree float toggle<CR>', {})
+
+--------------------------
+-- Window and Tab Keymaps --
+--------------------------
+
+vim.keymap.set('n', '<leader>sv', '<Cmd>vsplit<CR>', { desc = 'Split window vertically' })
+vim.keymap.set('n', '<leader>sh', '<Cmd>split<CR>', { desc = 'Split window horizontally' })
+vim.keymap.set('n', '<leader>tn', '<Cmd>tabnew<CR>', { desc = 'New tab' })
+vim.keymap.set('n', '<leader>t]', '<Cmd>tabnext<CR>', { desc = 'Next tab' })
+vim.keymap.set('n', '<leader>t[', '<Cmd>tabprevious<CR>', { desc = 'Previous tab' })
 
 ---------------------------
 -- Lualine Configuration --
@@ -123,7 +160,7 @@ lualine.setup {
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {'filename'},
+    lualine_c = {'filename', 'tabs'},
     lualine_x = {'encoding', 'fileformat', 'filetype'},
     lualine_y = {'progress'},
     lualine_z = {'location'}
@@ -136,7 +173,6 @@ lualine.setup {
     lualine_y = {},
     lualine_z = {}
   },
-  tabline = {},
   winbar = {},
   inactive_winbar = {},
   extensions = {}
@@ -146,4 +182,3 @@ lualine.setup {
 -- Transparent.nvim Setup --
 ----------------------------
 vim.g.transparent_enabled = true
-
