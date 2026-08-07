@@ -68,6 +68,28 @@ vim.opt.autoindent = true
 -- global scope
 vim.opt.autowrite = true
 
+-- Keep clean buffers in sync with files changed outside Neovim (for example,
+-- by an editor agent). Unsaved local edits are never overwritten.
+vim.opt.autoread = true
+vim.opt.updatetime = 500
+
+local external_changes = vim.api.nvim_create_augroup('external_changes', { clear = true })
+
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
+  group = external_changes,
+  command = 'checktime',
+})
+
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  group = external_changes,
+  callback = function(args)
+    vim.notify(
+      string.format('Reloaded externally changed file: %s', vim.api.nvim_buf_get_name(args.buf)),
+      vim.log.levels.INFO
+    )
+  end,
+})
+
 -- set tab behavior
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
